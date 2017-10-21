@@ -2,6 +2,8 @@
 
 : ${bind_networks:="$(ip route show | awk '$1 != "default" { print $1";" }')"}
 
+rndc-confgen -a -u named
+
 # set normal umask
 umask 0022
 
@@ -18,6 +20,13 @@ options {
     listen-on-v6 { none; };
     dnssec-enable yes;
     dnssec-validation auto;
+};
+
+include "/etc/bind/rndc.key";
+
+controls {
+    inet 127.0.0.1 port 953
+        allow { 127.0.0.1; } keys { "rndc-key"; };
 };
 
 logging {
