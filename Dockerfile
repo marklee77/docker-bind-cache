@@ -6,12 +6,10 @@ RUN apk add --update-cache --no-cache \
         bind-tools \
         dnssec-root && \
     rm -rf \
-        /etc/bind/* \
-        /var/bind \
+        /etc/bind/named.conf.* \
         /var/cache/apk/*
 
-RUN mkdir -m 0755 -p /data /cache
-RUN ln -s /cache/bind /var/bind
+RUN mkdir -m 0755 -p /data
 RUN ln -s /data/bind/named.conf /etc/bind/named.conf
 
 COPY root/etc/my_init.d/10-bind-setup /etc/my_init.d/
