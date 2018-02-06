@@ -7,11 +7,7 @@ rndc-confgen -a -r /dev/urandom -u named
 # set normal umask
 umask 0022
 
-config_file=/etc/bind/named.conf
-[ -L "$config_file" ] && config_file="$(readlink "$config_file")"
-config_dir="$(dirname "$config_file")"
-[ -d "$config_dir" ] || mkdir -m 0755 -p "$config_dir"
-[ -f "$config_file" ] || cat > "$config_file" <<EOF
+cat > /var/bind/named.conf <<EOF
 options {
     directory "/var/bind";
     pid-file "/var/run/named/named.pid";

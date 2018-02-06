@@ -1,16 +1,14 @@
 FROM marklee77/supervisor:alpine
-MAINTAINER Mark Stillwell <mark@stillwell.me>
+LABEL maintainer="Mark Stillwell <mark@stillwell.me>"
 
 RUN apk add --update-cache --no-cache \
         bind \
         bind-tools \
         dnssec-root && \
     rm -rf \
-        /etc/bind/named.conf.* \
+        /etc/bind/* \
+        /var/bind/* \
         /var/cache/apk/*
-
-RUN mkdir -m 0755 -p /data
-RUN ln -s /data/bind/named.conf /etc/bind/named.conf
 
 COPY root/etc/bind/rndc.conf /etc/bind/
 RUN chmod 0644 /etc/bind/rndc.conf
