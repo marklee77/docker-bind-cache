@@ -7,7 +7,7 @@ rndc-confgen -a -r /dev/urandom -u named
 # set normal umask
 umask 0022
 
-cat > /var/bind/named.conf <<EOF
+cat > /etc/bind/named.conf <<EOF
 options {
     directory "/var/bind";
     pid-file "/var/run/named/named.pid";
