@@ -16,6 +16,9 @@ RUN apk add --update-cache --no-cache \
 COPY root/etc/bind/named.conf /etc/bind/
 RUN chmod 0644 /etc/bind/named.conf
 
+COPY root/etc/bind/rndc.conf /etc/bind/
+RUN chmod 0644 /etc/bind/rndc.conf
+
 COPY root/etc/my_init.d/10-bind-setup /etc/my_init.d/
 RUN chmod 0755 /etc/my_init.d/10-bind-setup
 

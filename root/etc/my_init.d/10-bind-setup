@@ -3,6 +3,12 @@
 
 : ${bind_forwarders:=}
 
+# set secure umask
+umask 027
+
+rndc-confgen -a -c /var/bind/rndc.key
+chown named:named /var/bind/rndc.key
+
 # set normal umask
 umask 022
 
