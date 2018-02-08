@@ -28,3 +28,5 @@ RUN chmod 0644 /etc/supervisor/conf.d/bind.conf
 EXPOSE 53 53/udp
 
 VOLUME ["/var/bind"]
+
+HEALTHCHECK CMD ["dig", "@localhost", "."]
