@@ -1,0 +1,26 @@
+#!/bin/sh
+. /usr/local/share/my_init/functions.sh
+
+# set normal umask
+umask 022
+
+cat >/var/bind/zones.conf <<EOF
+zone "." IN {
+  type hint;
+  file "/etc/bind/db.root";
+};
+
+zone "localhost" {
+  type master;
+  file "/etc/bind/db.localhost";
+  allow-update { none; };
+  notify no;
+};
+
+zone "127.in-addr.arpa" {
+  type master;
+  file "/etc/bind/db.127";
+  allow-update { none; };
+  notify no;
+};
+EOF
