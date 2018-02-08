@@ -1,13 +1,24 @@
 #!/bin/sh
 . /usr/local/share/my_init/functions.sh
 
+: ${bind_forwarders:=}
+
 # set normal umask
 umask 022
 
 cat >/var/bind/zones.conf <<EOF
 zone "." {
-  type hint;
-  file "/etc/bind/db.root";
+  $(if [ -n "$bind_forwarders" ]; then
+    echo "type forward;"
+    echo "  forwarders {"
+    for forwarder in $bind_forwarders; do
+      echo "    $forwarder;"
+    done
+    echo "  };"
+  else
+    echo "type hint;"
+    echo "  file \"/etc/bind/db.root\";"
+  fi)
 };
 
 zone "localhost" {
