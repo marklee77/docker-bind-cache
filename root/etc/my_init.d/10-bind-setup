@@ -1,6 +1,7 @@
 #!/bin/sh
 . /usr/local/share/my_init/functions.sh
 
+: ${bind_forward_domains:=}
 : ${bind_forwarders:=}
 
 # set secure umask
@@ -12,20 +13,33 @@ chown named:named /var/bind/rndc.key
 # set normal umask
 umask 022
 
+cat >/var/bind/forwarders.conf <<EOF
+type forward;
+forwarders {
+$(for forwarder in $bind_forwarders; do
+    echo "  $forwarder;"
+done)
+};
+EOF
+
 cat >/var/bind/zones.conf <<EOF
 zone "." {
-  $(if [ -n "$bind_forwarders" ]; then
-    echo "type forward;"
-    echo "  forwarders {"
-    for forwarder in $bind_forwarders; do
-      echo "    $forwarder;"
-    done
-    echo "  };"
-  else
-    echo "type hint;"
+$(if [ -z "$bind_forwarders" ] || [ -n "$bind_forward_domains" ]; then
+    echo "  type hint;"
     echo "  file \"/etc/bind/db.root\";"
-  fi)
+else
+    echo "  include \"forwarders.conf\";"
+fi)
 };
+
+$(if [ -n "$bind_forwarders" ]; then
+    for domain in $bind_forward_domains; do
+        echo "zone \"$domain.\" {"
+        echo "  include \"forwarders.conf\";"
+        echo "};"
+        echo
+    done
+fi)
 
 zone "localhost" {
   type master;
