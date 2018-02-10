@@ -5,7 +5,7 @@ RUN apk add --update-cache --no-cache \
         bind \
         bind-tools \
         dnssec-root && \
-    mv /var/bind/named.ca /etc/bind/db.root && \
+    mv /var/bind/named.ca /etc/bind/db.root.internic && \
     mv /var/bind/pri/localhost.zone /etc/bind/db.localhost && \
     mv /var/bind/pri/127.zone /etc/bind/db.127 && \
     rm -rf \
@@ -13,11 +13,18 @@ RUN apk add --update-cache --no-cache \
         /var/bind/* \
         /var/cache/apk/*
 
-COPY root/etc/bind/named.conf /etc/bind/
-RUN chmod 0644 /etc/bind/named.conf
+COPY root/etc/bind/*.conf /etc/bind/
+RUN chmod 0644 /etc/bind/*.conf
 
-COPY root/etc/bind/rndc.conf /etc/bind/
-RUN chmod 0644 /etc/bind/rndc.conf
+RUN ( echo 'type slave;' && \
+      echo 'file "db.root.opennic";' && \
+      echo 'masterfile-format text;' && \
+      echo 'masters {' && \
+      dig @75.127.96.89 . NS | \
+        awk '$1 ~ /ns[0-9]+\.opennic/ && $4 == "A" { print "  "$5";" }' && \
+      echo '};' \
+    ) > /etc/bind/opennic-root.conf && \
+    chmod 0644 /etc/bind/opennic-root.conf
 
 COPY root/etc/my_init.d/10-bind-setup /etc/my_init.d/
 RUN chmod 0755 /etc/my_init.d/10-bind-setup

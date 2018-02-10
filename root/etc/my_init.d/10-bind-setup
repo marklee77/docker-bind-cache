@@ -3,6 +3,8 @@
 
 : ${bind_forward_domains:=}
 : ${bind_forwarders:=}
+: ${bind_root:=internic}
+
 
 # set secure umask
 umask 027
@@ -25,8 +27,7 @@ EOF
 cat >/var/bind/zones.conf <<EOF
 zone "." {
 $(if [ -z "$bind_forwarders" ] || [ -n "$bind_forward_domains" ]; then
-    echo "  type hint;"
-    echo "  file \"/etc/bind/db.root\";"
+    echo "  include \"/etc/bind/$bind_root-root.conf\";"
 else
     echo "  include \"forwarders.conf\";"
 fi)
