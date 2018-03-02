@@ -1,7 +1,8 @@
 FROM marklee77/supervisor:alpine
 LABEL maintainer="Mark Stillwell <mark@stillwell.me>"
 
-RUN apk add --update-cache --no-cache \
+RUN adduser -u 1000 -h /var/bind -s /bin/false -D named && \
+    apk add --update-cache --no-cache \
         bind \
         bind-tools \
         dnssec-root && \
@@ -36,4 +37,4 @@ EXPOSE 53 53/udp
 
 VOLUME ["/var/bind"]
 
-HEALTHCHECK CMD ["dig", "@localhost", "."]
+HEALTHCHECK CMD ["rndc", "status"]
