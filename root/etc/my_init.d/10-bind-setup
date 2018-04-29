@@ -5,6 +5,7 @@
 : ${bind_forwarders:=}
 : ${bind_root:=internic}
 
+mkdir -m 0755 /var/bind/keys
 
 # set secure umask
 umask 027
